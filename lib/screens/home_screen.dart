@@ -255,7 +255,7 @@ class _HomeScreenState extends State<HomeScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Bem-vindo ao GeoUnião,',
+                      'Bem-vindo ao GeoUnião',
                       style: TextStyle(color: Colors.white70, fontSize: 14),
                     ),
                     const SizedBox(height: 5),
