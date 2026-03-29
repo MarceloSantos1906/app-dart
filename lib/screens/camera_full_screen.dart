@@ -4,7 +4,7 @@ import 'package:geolocator/geolocator.dart';
 
 class CameraFullScreen extends StatefulWidget {
   final CameraDescription camera;
-  const CameraFullScreen({Key? key, required this.camera}) : super(key: key);
+  const CameraFullScreen({super.key, required this.camera});
 
   @override
   State<CameraFullScreen> createState() => _CameraFullScreenState();
@@ -17,7 +17,11 @@ class _CameraFullScreenState extends State<CameraFullScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = CameraController(widget.camera, ResolutionPreset.max, enableAudio: false);
+    _controller = CameraController(
+      widget.camera,
+      ResolutionPreset.max,
+      enableAudio: false,
+    );
     _initializeControllerFuture = _controller.initialize();
     debugPrint('[CameraFullScreen] initState: controller initialized');
   }
@@ -31,17 +35,21 @@ class _CameraFullScreenState extends State<CameraFullScreen> {
 
   Future<void> _takePictureAndReturn() async {
     try {
-      debugPrint('[CameraFullScreen] _takePictureAndReturn: waiting initialization');
       await _initializeControllerFuture;
 
       debugPrint('[CameraFullScreen] _takePictureAndReturn: getting position');
-      final position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
       debugPrint('[CameraFullScreen] _takePictureAndReturn: taking picture');
       final image = await _controller.takePicture();
 
       if (!mounted) {
-        debugPrint('[CameraFullScreen] not mounted after capture — skipping pop');
+        debugPrint(
+          '[CameraFullScreen] not mounted after capture — skipping pop',
+        );
         return;
       }
 
@@ -55,9 +63,9 @@ class _CameraFullScreenState extends State<CameraFullScreen> {
     } catch (e, st) {
       debugPrint('Erro ao tirar foto: $e\n$st');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao tirar foto: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erro ao tirar foto: $e')));
       }
     }
   }
@@ -74,7 +82,9 @@ class _CameraFullScreenState extends State<CameraFullScreen> {
               future: _initializeControllerFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState != ConnectionState.done) {
-                  return const Center(child: CircularProgressIndicator(color: Colors.white));
+                  return const Center(
+                    child: CircularProgressIndicator(color: Colors.white),
+                  );
                 }
 
                 final size = MediaQuery.of(context).size;
@@ -88,9 +98,7 @@ class _CameraFullScreenState extends State<CameraFullScreen> {
                 return Transform.scale(
                   scale: scale < 1 ? 1 / scale : scale,
                   alignment: Alignment.center,
-                  child: Center(
-                    child: CameraPreview(_controller),
-                  ),
+                  child: Center(child: CameraPreview(_controller)),
                 );
               },
             ),
@@ -106,7 +114,9 @@ class _CameraFullScreenState extends State<CameraFullScreen> {
                     debugPrint('[CameraFullScreen] close pressed -> popping');
                     nav.pop();
                   } else {
-                    debugPrint('[CameraFullScreen] close pressed but cannot pop');
+                    debugPrint(
+                      '[CameraFullScreen] close pressed but cannot pop',
+                    );
                   }
                 },
               ),
@@ -123,7 +133,7 @@ class _CameraFullScreenState extends State<CameraFullScreen> {
                     height: 78,
                     width: 78,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.08),
+                      color: Colors.white.withValues(alpha: 0.08),
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white, width: 3),
                     ),
@@ -131,7 +141,10 @@ class _CameraFullScreenState extends State<CameraFullScreen> {
                       child: Container(
                         height: 54,
                         width: 54,
-                        decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
                       ),
                     ),
                   ),
